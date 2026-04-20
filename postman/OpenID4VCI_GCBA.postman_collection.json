@@ -1,0 +1,206 @@
+{
+	"info": {
+		"_postman_id": "754a14d4-1251-4b75-bad4-67a9ca8ef802",
+		"name": "OpenID4VCI Issuer GCBA",
+		"description": "Colección para probar los endpoints del emisor de credenciales vericables (OpenID4VCI) para GCBA.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Metadatos y Well-Known",
+			"item": [
+				{
+					"name": "DID Document",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/.well-known/did.json",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								".well-known",
+								"did.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "JWKS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/.well-known/jwks.json",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								".well-known",
+								"jwks.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OpenID Credential Issuer Metadata",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/.well-known/openid-credential-issuer",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								".well-known",
+								"openid-credential-issuer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OAuth Authorization Server Metadata",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/.well-known/oauth-authorization-server/issuer",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								".well-known",
+								"oauth-authorization-server",
+								"issuer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Emisión (Protocolo)",
+			"item": [
+				{
+					"name": "Generar Nueva Oferta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/openid4vci/credential-offer",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"openid4vci",
+								"credential-offer"
+							]
+						},
+						"description": "Obtiene un QR y un PIN para iniciar el flujo de emisión."
+					},
+					"response": []
+				},
+				{
+					"name": "Token Endpoint",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "urn:ietf:params:oauth:grant-type:pre-authorized_code",
+									"type": "text"
+								},
+								{
+									"key": "pre-authorized_code",
+									"value": "CAMBIAR_POR_CODE_DEL_QR_O_SESS_RECORD",
+									"type": "text"
+								},
+								{
+									"key": "user_pin",
+									"value": "1234",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/issuer/token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"issuer",
+								"token"
+							]
+						},
+						"description": "Intercambia el pre-authorized_code y el PIN por un Access Token."
+					},
+					"response": []
+				},
+				{
+					"name": "Credential Endpoint",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"format\": \"vc+sd-jwt\",\n    \"credential_definition\": {\n        \"type\": [\"VerifiableCredential\", \"MyCredentialType\"]\n    },\n    \"proof\": {\n        \"proof_type\": \"jwt\",\n        \"jwt\": \"JWT_POP_FIRMADO_POR_WALLET\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/issuer/credential",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"issuer",
+								"credential"
+							]
+						},
+						"description": "Solicita la credencial final usando el Access Token y una prueba de posesión (Proof of Possession)."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://tu-ngrok-url.app",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
