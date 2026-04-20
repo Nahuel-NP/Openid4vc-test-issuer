@@ -1,0 +1,37 @@
+services:
+  vault:
+    image: hashicorp/vault:1.15.4
+    container_name: vault
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=myroottoken
+      - VAULT_ADDR=http://localhost:8200
+    command: server -dev -dev-root-token-id=myroottoken
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - credo-net
+
+  postgres:
+    image: postgres:15.3
+    container_name: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=credo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - credo-net
+
+volumes:
+  vault-data:
+  postgres-data:
+
+networks:
+  credo-net:
+    driver: bridge
