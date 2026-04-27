@@ -15,9 +15,14 @@
     "@credo-ts/core": "^0.6.3",
     "@credo-ts/node": "^0.6.3",
     "@credo-ts/openid4vc": "^0.6.3",
+    "@digitalbazaar/ed25519-signature-2020": "^5.4.0",
+    "@digitalbazaar/vc": "^7.3.0",
+    "@digitalbazaar/vc-status-list": "^8.0.1",
+    "@digitalbazaar/vc-status-list-context": "^3.1.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "env-var": "^7.5.0",
+    "jsonld": "^9.0.0",
     "pg": "^8.20.0"
   },
   "devDependencies": {

@@ -22,6 +22,10 @@ export class IssuerRoutes {
 
     router.post("/openid4vci/credential-offer", controller.getCredentialOffer);
 
+    router.get("/debug/credential-structure", controller.debugCredential);
+
+    router.get("/debug/issuance-sessions", controller.debugIssuanceSessions);
+
     return router;
   }
 }

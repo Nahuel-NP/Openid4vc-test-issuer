@@ -1,5 +1,6 @@
 import { Agent, DidDocument, VerificationMethod } from "@credo-ts/core";
 import { envs } from "../../../config/envs";
+import { ISSUER_KEY } from "../../../config/constants/issuer.constants";
 
 export class WellKnownService {
   constructor(private readonly agent: Agent) {}
@@ -10,7 +11,7 @@ export class WellKnownService {
     // Strip protocol prefix: did:web does not accept 'https://' or 'http://'
     const rawDomain = envs.DOMAIN.replace(/^https?:\/\//, "");
     const did = `did:web:${rawDomain}`;
-    const keyId = "issuer-key";
+    const keyId = ISSUER_KEY;
 
     // Try to get existing key first to avoid duplicates
     let publicJwk: any = null;
@@ -21,7 +22,7 @@ export class WellKnownService {
       });
     } catch (error) {
       // Key not yet registered in Credo — will be created below.
-      console.debug("issuer-key not found in KMS, will create:", (error as Error).message);
+      console.debug(`${ISSUER_KEY} not found in KMS, will create:`, (error as Error).message);
     }
 
     if (!publicJwk) {
@@ -67,7 +68,7 @@ export class WellKnownService {
   };
 
   getJsonWebKey = async () => {
-    const keyId = "issuer-key";
+    const keyId = ISSUER_KEY;
     const publicJwk = await this.agent.kms.getPublicKey({
       keyId,
       backend: "vault",

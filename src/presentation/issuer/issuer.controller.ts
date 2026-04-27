@@ -22,4 +22,22 @@ export class IssuerController {
     const data = await this.credentialsService.createCredentialOffer();
     res.json(data);
   };
+
+  public debugCredential = async (req: Request, res: Response) => {
+    try {
+      const data = await this.credentialsService.debugCredentialStructure();
+      res.json({ message: "Debug credential logged to console", credential: data });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to debug credential", details: error instanceof Error ? error.message : String(error) });
+    }
+  };
+
+  public debugIssuanceSessions = async (req: Request, res: Response) => {
+    try {
+      const data = await this.credentialsService.debugIssuanceSessions();
+      res.json({ sessions: data });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to list sessions", details: error instanceof Error ? error.message : String(error) });
+    }
+  };
 }

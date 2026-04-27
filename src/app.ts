@@ -57,37 +57,35 @@ async function main() {
                 ? { method: "did" as const, didUrl: holderKey!.didUrl }
                 : { method: "jwk" as const, jwk: holderKey!.jwk };
 
-            if (credentialConfigurationId === "vc_jwt") {
-              return {
-                type: "credentials",
-                format: "vc+sd-jwt",
-                credentials: [
-                  {
-                    alg: "EdDSA",
-                    verificationMethod: `${did}#owner`,
-                    credential: new W3cV2Credential({
-                      type: ["VerifiableCredential", "MyCredentialType"],
-                      issuer: did,
-                      credentialSubject: {
-                        given_name: "Juan",
-                        family_name: "Pérez",
-                        birth_date: "1990-01-15",
-                        document_number: "12345678",
-                      },
-                    }),
-                    holder,
-                    disclosureFrame: {
-                      _sd: [
-                        "given_name",
-                        "family_name",
-                        "birth_date",
-                        "document_number",
-                      ],
-                    },
-                  },
-                ],
-              };
-            }
+        if (credentialConfigurationId === "citizen_card") {
+          return {
+            type: "credentials",
+            format: "dc+sd-jwt",
+            credentials: [
+              {
+                alg: "EdDSA",
+                verificationMethod: `${did}#owner`,
+                issuer: { method: "did" as const, didUrl: `${did}#owner` },
+                payload: {
+                  vct: "MyCredentialType",
+                  given_name: "Juan",
+                  family_name: "Pérez",
+                  birth_date: "1990-01-15",
+                  document_number: "12345678",
+                },
+                holder,
+                disclosureFrame: {
+                  _sd: [
+                    "given_name",
+                    "family_name",
+                    "birth_date",
+                    "document_number",
+                  ],
+                },
+              },
+            ],
+          };
+        }
 
             throw new Error(
               `Unsupported credential configuration: ${credentialConfigurationId}`,
