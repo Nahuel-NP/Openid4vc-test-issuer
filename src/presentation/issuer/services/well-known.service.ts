@@ -1,9 +1,14 @@
 import { Agent, DidDocument, VerificationMethod } from "@credo-ts/core";
 import { envs } from "../../../config/envs";
 import { ISSUER_KEY } from "../../../config/constants/issuer.constants";
+import { StatusListService } from "./status-list.service";
 
 export class WellKnownService {
-  constructor(private readonly agent: Agent) {}
+  constructor(private readonly agent: Agent) {
+    this.statusListService = new StatusListService();
+  }
+
+  private statusListService: StatusListService;
 
 
 
@@ -76,5 +81,10 @@ export class WellKnownService {
     return {
       keys: [publicJwk],
     };
+  };
+
+  getStatusList = async () => {
+    const statusListDocument = await this.statusListService.getStatusListDocument();
+    return statusListDocument;
   };
 }

@@ -20,7 +20,13 @@ export class IssuerRoutes {
 
     router.get("/.well-known/jwks.json", controller.getJsonWebKey);
 
+    router.get("/.well-known/status-list.json", controller.getStatusList);
+
     router.post("/openid4vci/credential-offer", controller.getCredentialOffer);
+
+    router.post("/openid4vci/revoke", controller.revokeCredential);
+
+    router.get("/openid4vci/credential-status/:credentialId", controller.checkCredentialStatus);
 
     router.get("/debug/credential-structure", controller.debugCredential);
 

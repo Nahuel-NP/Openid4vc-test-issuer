@@ -6,6 +6,7 @@ import { OpenId4VcModule } from "@credo-ts/openid4vc";
 import { Agent, W3cV2Credential } from "@credo-ts/core";
 import { CredentialsService } from "./presentation/issuer/services/credentials.service";
 import { WellKnownService } from "./presentation/issuer/services/well-known.service";
+import { StatusListService } from "./presentation/issuer/services/status-list.service";
 
 async function main() {
   const agentBuilder = new CredoAgentBuilder();
@@ -19,6 +20,8 @@ async function main() {
     console.log(`\n🕵️ [EXPRESS HTTP] ${req.method} ${req.url}`);
     next();
   });
+
+  const statusListService = new StatusListService();
 
   const agent = await agentBuilder
     .setConfiguration({
@@ -50,12 +53,16 @@ async function main() {
 
             const did = `did:web:${envs.DOMAIN.replace(/^https?:\/\//, "")}`;
 
-            // Build holder binding for the credential
             const holderKey = holderBinding.keys[0];
             const holder =
               holderKey!.method === "did"
                 ? { method: "did" as const, didUrl: holderKey!.didUrl }
                 : { method: "jwk" as const, jwk: holderKey!.jwk };
+
+        const credentialId = issuanceSession.id;
+        const index = await statusListService.registerCredential(credentialId);
+        const domain = envs.DOMAIN.replace(/^https?:\/\//, "");
+        const statusListUrl = `https://${domain}/.well-known/status-list.json`;
 
         if (credentialConfigurationId === "citizen_card") {
           return {
@@ -72,6 +79,12 @@ async function main() {
                   family_name: "Pérez",
                   birth_date: "1990-01-15",
                   document_number: "12345678",
+                  credentialStatus: {
+                    id: `${statusListUrl}#${index}`,
+                    type: "StatusList2021",
+                    statusListCredential: statusListUrl,
+                    statusListIndex: index,
+                  },
                 },
                 holder,
                 disclosureFrame: {
