@@ -82,7 +82,7 @@ export class CredoAgentBuilder {
       {
         config: {
           ...this.config,
-          logger: new ConsoleLogger(LogLevel.debug),
+          logger: new ConsoleLogger(LogLevel.Debug),
         },
         dependencies: agentDependencies,
         modules: {
